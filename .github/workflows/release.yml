@@ -1,0 +1,68 @@
+name: Release
+
+# A tag such as v1.2.0 publishes a GitHub release with VillageQoL-<version>.zip. Canopy Studio's
+# installer reads this repository's latest release and downloads VillageQoL-<version>.zip by that
+# name, checked against the SHA-256 GitHub lists for it. The build is the Windows workflow itself,
+# called rather than copied.
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+concurrency:
+  # Queued, not cancelled: a cancelled publish could leave the release half made.
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  windows:
+    uses: ./.github/workflows/release-windows.yml
+
+  publish:
+    needs: [windows]
+    runs-on: ubuntu-latest
+    # The only job that can write.
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: packages-*
+          path: dist
+          merge-multiple: true
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          version="${TAG#v}"
+          if [ ! -f "dist/VillageQoL-$version.zip" ]; then
+            echo "::error::VillageQoL-$version.zip is missing, and Canopy Studio installs from it."
+            exit 1
+          fi
+
+          {
+            echo "## Download"
+            echo
+            echo "- \`VillageQoL-$version.zip\`: the VillageQoL mod. Extract into the game folder, next to \`village.exe\`."
+            echo
+            echo "VillageQoL needs [Canopy](https://github.com/Zorkats/Canopy/releases/latest), the mod loader. [Canopy Studio](https://github.com/Zorkats/CanopyStudio/releases/latest) installs both for you."
+            echo
+            echo "On Linux and Steam Deck the game runs through Proton. Canopy loads only with this Steam launch option:"
+            echo
+            echo '```'
+            echo 'WINEDLLOVERRIDES="dinput8=n,b" %command%'
+            echo '```'
+          } > notes.md
+
+          gh release create "$TAG" "dist/VillageQoL-$version.zip" --verify-tag --title "VillageQoL $version" \
+            --notes-file notes.md --generate-notes

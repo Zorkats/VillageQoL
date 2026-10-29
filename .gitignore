@@ -1,0 +1,22 @@
+# Local research workspace and analysis tooling, never published.
+_work/
+tools/
+.allyrc
+
+# Build output
+build/
+bin/
+obj/
+cmake-build-*/
+dist/
+vcpkg_installed/
+
+# Local IDE and CMake state
+.vs/
+.idea/
+.vscode/
+CMakeUserPresets.json
+*.user
+
+# Python bytecode from the dev scripts
+__pycache__/

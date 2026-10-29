@@ -1,0 +1,32 @@
+// The version Windows shows in the DLL's properties. Canopy Studio reads
+// ProductName and ProductVersion to offer a newer release. VILLAGEQOL_RELEASE
+// and its three numbers come from the top CMakeLists.txt.
+#include <winver.h>
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION VILLAGEQOL_MAJOR,VILLAGEQOL_MINOR,VILLAGEQOL_PATCH,0
+PRODUCTVERSION VILLAGEQOL_MAJOR,VILLAGEQOL_MINOR,VILLAGEQOL_PATCH,0
+FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+FILEFLAGS 0
+FILEOS VOS_NT_WINDOWS32
+FILETYPE VFT_DLL
+FILESUBTYPE VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "Zorkats"
+            VALUE "FileDescription", "VillageQoL, a Canopy mod for Village in the Shade"
+            VALUE "FileVersion", VILLAGEQOL_RELEASE
+            VALUE "InternalName", "VillageQoL"
+            VALUE "OriginalFilename", "VillageQoL.dll"
+            VALUE "ProductName", "VillageQoL"
+            VALUE "ProductVersion", VILLAGEQOL_RELEASE
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END

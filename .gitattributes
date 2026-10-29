@@ -1,0 +1,9 @@
+# Text files are stored with LF and checked out with the platform's endings.
+* text=auto
+
+# Batch files need CRLF to run.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+*.dll binary
+*.zip binary

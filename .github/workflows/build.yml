@@ -1,0 +1,21 @@
+# Builds and tests every push to main and every pull request with the same workflow a release
+# uses, so a change that would break a release fails here first. The package is kept as a
+# workflow artifact named after the commit. Tagged releases come from release.yml.
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  # A newer push to the same branch or pull request makes an older run pointless.
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    uses: ./.github/workflows/release-windows.yml

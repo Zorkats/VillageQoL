@@ -1,0 +1,3 @@
+[submodule "external/Canopy"]
+	path = external/Canopy
+	url = https://github.com/Zorkats/Canopy.git

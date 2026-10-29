@@ -1,0 +1,82 @@
+name: Build (Windows)
+
+# Builds VillageQoL against the Canopy submodule, runs Canopy's core tests over VillageQoL's
+# sources, and packages VillageQoL-<version>.zip with .github/scripts/package_windows.ps1, which
+# refuses a DLL that needs the Visual C++ redistributable. The zip is a workflow artifact;
+# build.yml and release.yml call this same workflow, so a pull request and a tagged release pass
+# the same checks.
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: 'Version for the package name, without the leading v; empty for the tag or dev-<commit>'
+        required: false
+        type: string
+        default: ''
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version for the package name, without the leading v'
+        required: true
+        default: '0.0.0-test'
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    # Pinned rather than windows-latest, which moves between images: the toolchain that builds a
+    # release should change when we decide it does, not when the runner pool rolls over.
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Canopy, in external/Canopy: the SDK header, the game addresses and the tests.
+          submodules: recursive
+
+      - name: Resolve version
+        id: version
+        # Through the environment rather than inline, so the input cannot be read as shell syntax.
+        shell: pwsh
+        env:
+          REQUESTED_VERSION: ${{ inputs.version }}
+        run: |
+          $value = $env:REQUESTED_VERSION
+          if (-not $value -and $env:GITHUB_REF_TYPE -eq 'tag') { $value = $env:GITHUB_REF_NAME -replace '^v', '' }
+          if (-not $value) { $value = "dev-$($env:GITHUB_SHA.Substring(0, 7))" }
+          "value=$value" >> $env:GITHUB_OUTPUT
+
+      - name: Set up the MSVC x64 environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      # The DLL's version resource and the mod's manifest carry the version. No vcpkg: only
+      # Canopy's loader needs MinHook, and VillageQoL hooks through the loader.
+      - name: Configure
+        shell: pwsh
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release "-DVILLAGEQOL_RELEASE=$env:VERSION"
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Test
+        # Canopy's core tests, whose address-list check covers src. The checks that read the game
+        # or the private test mods skip themselves here.
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Package and verify dependencies
+        shell: pwsh
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
+        run: pwsh .github/scripts/package_windows.ps1 -BuildDir build -Version $env:VERSION -OutDir dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages-windows-${{ steps.version.outputs.value }}
+          path: dist/*.zip
+          if-no-files-found: error
