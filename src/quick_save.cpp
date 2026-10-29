@@ -1322,6 +1322,7 @@ void __fastcall Detour_LoadEventStart() {
 
 // =============================================================
 // HOOK INITIALIZATION
+// =============================================================
 // A site the build lacks, which only an optional patch may be, is skipped.
 bool WriteCode(const retail::CodePatch& patch, const uint8_t* bytes) {
     if (!patch.address->Found()) {
