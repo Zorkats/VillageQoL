@@ -36,20 +36,19 @@
 // =============================================================
 // EVENT SKIP DESIGN
 // =============================================================
-// The game's own O + R2 chord, Cancel with the fast forward button, can run
-// the skip the beta build had, as an opt-in toggle. Like fast forward it only
-// starts in an event the game marks skippable.
+// The game's own O + R2 chord, Cancel with the fast forward button, runs a
+// skip, as an opt-in toggle. Like fast forward it only starts in an event the
+// game marks skippable.
 //
 // One press runs the event at the skip speed, through the same time manager
 // fast forward as holding the button, with talk advanced on its own. The
-// event stays on screen: the beta hid it behind a black fade and skipped
-// drawing, which this leaves out.
+// event stays on screen the whole time.
 //
-// The skip never answers anything for the player. The beta stopped once a
-// receiver asked for any command beyond the talk and event ones; so does
-// this, so a choice, a popup or the field handing control back stops it and
-// the player decides. It also stops when the event ends, when a non-skippable
-// event takes over, when the toggle goes off and after a time limit.
+// The skip never answers anything for the player. It stops once a receiver
+// asks for any command beyond the talk and event ones, so a choice, a popup
+// or the field handing control back stops it and the player decides. It also
+// stops when the event ends, when a non-skippable event takes over, when the
+// toggle goes off and after a time limit.
 
 namespace event_fast_forward {
 namespace {
@@ -77,8 +76,8 @@ constexpr CanopyText kSpeedChoices[] = {
 };
 static_assert(sizeof(kSpeedChoices) / sizeof(kSpeedChoices[0]) == sizeof(kSpeeds) / sizeof(kSpeeds[0]), "speeds");
 
-// Each skip frame steps this many frames: four times fast forward's fastest,
-// under the beta's 132, which lets moving characters overshoot.
+// Each skip frame steps this many frames: four times fast forward's fastest.
+// Much larger steps let moving characters overshoot.
 constexpr double kSkipSpeed = 32.0;
 constexpr uint64_t kSkipTimeLimitMs = 30000;
 // A queue longer than this is not a frame's queries.
@@ -135,8 +134,8 @@ constexpr CanopyText kTextHelp = {
 };
 
 constexpr CanopyText kSkipLabels = {
-    "ベータ版イベントスキップ", "Beta Event Skip", "Passer les événements (bêta)", "Saltar eventos (beta)",
-    "測試版事件跳過", "베타 이벤트 건너뛰기", "测试版事件跳过",
+    "高速イベントスキップ", "Fast Event Skip", "Passage rapide des événements", "Salto rápido de eventos",
+    "快速事件跳過", "빠른 이벤트 건너뛰기", "快速事件跳过",
 };
 
 constexpr CanopyText kSkipHelp = {

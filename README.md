@@ -32,7 +32,7 @@ To uninstall, delete `mods\VillageQoL.dll` and `mods\VillageQoL.ini`.
 | Walking Speed | How fast you walk and run in the field: Normal, 1.25x, 1.5x, 1.75x or 2x. Movement during events does not change. | 1.5x |
 | Event Fast Forward | Hold the key or button during an event the game lets you skip, to play it faster. Events that cannot be skipped are never sped up. | Left Ctrl or RT, 4x |
 | Advance Text | While fast forwarding, talk advances on its own. | On |
-| Beta Event Skip | Press Cancel and the fast forward button together (B + RT, or Circle + R2) during an event the game lets you skip, to run it at 32x like the beta build's skip. It stops at every choice and popup and hands control back, so it never answers for you. | Off |
+| Fast Event Skip | Press Cancel and the fast forward button together (B + RT, or Circle + R2) during an event the game lets you skip, to run it at 32x. It stops at every choice and popup and hands control back, so it never answers for you. | Off |
 | Mouse Wheel Zoom | Scroll the mouse wheel in the field to step the camera through its three zoom levels. | On |
 | Back Up Key Bindings | Keeps a copy of your game key bindings in `mods\VillageQoL.ini` and restores them if they ever load back at their defaults. | On |
 
